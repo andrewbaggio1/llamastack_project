@@ -9,7 +9,7 @@ Although police departments have spent millions buying body cameras, manual revi
   <li>Add police procedure manuals that the AI can automatically reference and learn from.</li>
 </ul>
 
-
+## How to Start
 To start running, open a Docker session and then start with:
 <code>docker compose build</code>
 
