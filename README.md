@@ -6,7 +6,6 @@ Although police departments have spent millions buying body cameras, manual revi
 <ul>
   <li>Automatically analyze audio from video footage from police body cams, no matter how long.</li>
   <li>Run it locally, privately, and efficiently, even without WiFi.</li>
-  <li>Add police procedure manuals that the AI can automatically reference and learn from.</li>
 </ul>
 
 ## How to Start
