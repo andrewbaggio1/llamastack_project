@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bodycam Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 2em auto;
+      padding: 1em;
+      line-height: 1.6;
+    }
+
+    h2 {
+      margin-bottom: 0.5em;
+    }
+
+    input[type="file"] {
+      margin: 1em 0;
+    }
+
+    button {
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    pre {
+      margin-top: 2em;
+      padding: 1em;
+      background: #f4f4f4;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>Upload Bodycam Footage</h2>
+  <input type="file" id="videoFile" accept="video/mp4" />
+  <br />
+  <button onclick="uploadVideo()">Analyze</button>
+
+  <pre id="output">No analysis yet.</pre>
+
+  <script>
+    async function uploadVideo() {
+      const fileInput = document.getElementById("videoFile");
+      const output = document.getElementById("output");
+
+      if (!fileInput.files[0]) {
+        alert("Please select an MP4 file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("video", fileInput.files[0]);
+
+      output.textContent = "Analyzing video... This may take a few minutes.";
+
+      try {
+        const res = await fetch("/analyze", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || "Unexpected error");
+        }
+
+        const result = await res.json();
+
+        // Format the response nicely
+        const formatted = result.map(entry => {
+          const start = entry.start_time_minsec || "??:??";
+          const end = entry.end_time_minsec || "??:??";
+          const summary = entry.summary ? entry.summary.trim() : "(No summary)";
+          return `${start} to ${end}:\n${summary}\n`;
+        }).join("\n");
+
+        output.textContent = formatted;
+      } catch (err) {
+        output.textContent = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

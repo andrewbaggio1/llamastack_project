@@ -2,3 +2,4 @@ llama-stack-client
 python-dotenv
 moviepy==1.0.3
 git+https://github.com/openai/whisper.git
+flask
