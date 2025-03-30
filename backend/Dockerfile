@@ -22,7 +22,7 @@ RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 # Copy app code
 COPY . .
 
-EXPOSE 5000
+EXPOSE 5001
 
 # Default command
 CMD ["python3", "web_api.py"]

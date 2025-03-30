@@ -47,7 +47,7 @@ services:
         LLAMA_STACK_URL: "http://llama-stack:${LLAMA_STACK_PORT}"
 
       ports:
-      - "5000:5000"                    # Expose Flask API
+      - "5001:5001"                    # Expose Flask API
       command: python3 web_api.py 
       
       restart: unless-stopped
