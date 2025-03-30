@@ -1,11 +1,15 @@
-﻿# llamastack_project
+﻿# LlamaPD
 
-Run with:
+Although police departments have spent millions buying body cameras, manual review is so labor-intensive and subjective that footage is rarely processed. Experts, police, and citizen activists alike all recognize that body cameras improve transparency, accountability, and safety. Enter LlamaPD, a Llama-powered system that automatically analyzes transcripts of police body cam footage to deliver efficient, private, and objective analysis.
 
-docker compose build
 
-docker compose up -d
+To start running, open a Docker session and then start with:
+<code>docker compose build</code>
 
-Then you can get into the bash terminal in the backend with:
+<code>docker compose up -d</code>
 
-docker exec -it backend /bin/bash 
+Then, simply open http://localhost:5001/ to access the web portal, where you can upload video files for analysis, which will display on the website.
+
+
+For debugging purposes, you can enter the backend environment via Bash using the following command:
+<code>docker exec -it backend /bin/bash</code>
