@@ -165,6 +165,17 @@ def main():
                     "summary": "LLM client not available."
                 }
             
+
+            # Add detailed timestamp info
+            chunk_end_time = min(start_time + CHUNK_DURATION, video_duration)
+
+            incident_data.update({
+                "start_time_seconds": start_time,
+                "end_time_seconds": chunk_end_time,
+                "start_time_minsec": f"{start_time // 60:02d}:{start_time % 60:02d}",
+                "end_time_minsec": f"{chunk_end_time // 60:02d}:{chunk_end_time % 60:02d}"
+            })
+
             results.append(incident_data)
         
         # Save results to JSON
