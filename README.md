@@ -13,6 +13,7 @@ Although police departments have spent millions buying body cameras, manual revi
 To start running, open a Docker session and then start with:
 
 <code>docker compose build</code>
+
 <code>docker compose up -d</code>
 
 Then, simply open http://localhost:5001/ to access the web portal, where you can upload video files for analysis, which will display on the website.
