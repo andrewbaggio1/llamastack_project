@@ -34,12 +34,19 @@
       background: #0056b3;
     }
 
-    pre {
+    #output {
       margin-top: 2em;
       padding: 1em;
       background: #f4f4f4;
       border-radius: 6px;
-      white-space: pre-wrap;
+    }
+
+    .entry {
+      margin-bottom: 1.5em;
+    }
+
+    .time-range {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -49,7 +56,7 @@
   <br />
   <button onclick="uploadVideo()">Analyze</button>
 
-  <pre id="output">No analysis yet.</pre>
+  <div id="output">No analysis yet.</div>
 
   <script>
     async function uploadVideo() {
@@ -64,7 +71,7 @@
       const formData = new FormData();
       formData.append("video", fileInput.files[0]);
 
-      output.textContent = "Analyzing video... This may take a few minutes.";
+      output.innerHTML = "Analyzing video... This may take a few minutes.";
 
       try {
         const res = await fetch("/analyze", {
@@ -79,17 +86,22 @@
 
         const result = await res.json();
 
-        // Format the response nicely
-        const formatted = result.map(entry => {
+        // Render with bolded time range
+        const html = result.map(entry => {
           const start = entry.start_time_minsec || "??:??";
           const end = entry.end_time_minsec || "??:??";
           const summary = entry.summary ? entry.summary.trim() : "(No summary)";
-          return `${start} to ${end}:\n${summary}\n`;
-        }).join("\n");
+          return `
+            <div class="entry">
+              <div class="time-range">${start} to ${end}:</div>
+              <div>${summary}</div>
+            </div>
+          `;
+        }).join("");
 
-        output.textContent = formatted;
+        output.innerHTML = html;
       } catch (err) {
-        output.textContent = "Error: " + err.message;
+        output.innerHTML = "Error: " + err.message;
       }
     }
   </script>
