@@ -1,0 +1,61 @@
+services:
+  ollama:
+    build:
+      context: ./ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - docker-net
+    restart: unless-stopped
+
+  llama-stack:
+    image: llamastack/distribution-ollama:latest
+    container_name: llama-stack
+    ports:
+      - "${LLAMA_STACK_PORT}:${LLAMA_STACK_PORT}"
+    volumes:
+      - ~/.llama:/root/.llama
+    environment:
+      INFERENCE_MODEL: "${INFERENCE_MODEL}"
+      OLLAMA_URL: "http://ollama:11434"
+    command: >
+      --port ${LLAMA_STACK_PORT}
+      --env INFERENCE_MODEL=${INFERENCE_MODEL}
+      --env OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    networks:
+      - docker-net
+    restart: unless-stopped
+
+  backend:
+      build:
+        context: ./backend
+      container_name: backend
+      volumes:
+        - ./backend:/app
+      working_dir: /app
+      networks:
+        - docker-net
+      depends_on:
+        - llama-stack
+      environment:
+        LLAMA_STACK_URL: "http://llama-stack:${LLAMA_STACK_PORT}"
+      command: tail -f /dev/null  # Keeps it running for dev purposes
+      restart: unless-stopped
+      develop:
+        watch:
+          - path: ./backend
+            target: /app
+            action: sync  # You can also use `rebuild` or `restart`
+
+
+volumes:
+  ollama_data:
+
+networks:
+  docker-net:
+    driver: bridge
