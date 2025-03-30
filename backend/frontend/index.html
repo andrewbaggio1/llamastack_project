@@ -1,109 +1,291 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <title>Bodycam Analyzer</title>
+
   <style>
+
+    /* We’ll pick a warm off-white that matches the image background */
+
     body {
+
+      background-color: #FAF5F0;
+
       font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 2em auto;
-      padding: 1em;
-      line-height: 1.6;
+
+      margin: 0;
+
+      padding: 0;
+
     }
+
+ 
+
+    /* A simple header to hold the logo and title */
+
+    header {
+
+      display: flex;
+
+      align-items: center;
+
+      padding: 1em;
+
+    }
+
+ 
+
+    header img {
+
+      height: 60px;
+
+      margin-right: 1em;
+
+    }
+
+ 
+
+    header h1 {
+
+      margin: 0;
+
+      font-size: 1.5em;
+
+      color: #131D20;
+
+    }
+
+ 
+
+    .container {
+
+      max-width: 700px;
+
+      margin: 0 auto;
+
+      padding: 2em;
+
+      line-height: 1.6;
+
+    }
+
+ 
 
     h2 {
+
+      margin-top: 0;
+
       margin-bottom: 0.5em;
+
     }
+
+ 
 
     input[type="file"] {
-      margin: 1em 0;
+
+     margin: 1em 0;
+
     }
+
+ 
+
+    /* Use a modern-looking blue to match the “logo color” request */
 
     button {
+
       padding: 0.6em 1.2em;
+
       font-size: 1em;
-      background: #007BFF;
+
+      background: #131D20;
+
       color: white;
+
       border: none;
+
       border-radius: 4px;
+
       cursor: pointer;
+
+      transition: background 0.3s ease;
+
     }
+
+ 
 
     button:hover {
-      background: #0056b3;
+
+      background: #1A2629;
+
     }
+
+ 
 
     #output {
+
       margin-top: 2em;
+
       padding: 1em;
+
       background: #f4f4f4;
+
       border-radius: 6px;
+
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
     }
+
+ 
 
     .entry {
+
       margin-bottom: 1.5em;
+
     }
+
+ 
 
     .time-range {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h2>Upload Bodycam Footage</h2>
-  <input type="file" id="videoFile" accept="video/mp4" />
-  <br />
-  <button onclick="uploadVideo()">Analyze</button>
 
-  <div id="output">No analysis yet.</div>
+      font-weight: bold;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+
+    <!-- Insert the Llama PD logo at top left -->
+
+    <img src="llama_pd_logo.png" alt="Llama PD Logo" />
+
+    <h1>Bodycam Analyzer</h1>
+
+  </header>
+
+ 
+
+  <div class="container">
+
+    <h2>Upload Bodycam Footage</h2>
+
+    <input type="file" id="videoFile" accept="video/mp4" />
+
+    <br />
+
+    <button onclick="uploadVideo()">Analyze</button>
+
+ 
+
+    <div id="output">No analysis yet.</div>
+
+  </div>
+
+ 
 
   <script>
+
     async function uploadVideo() {
+
       const fileInput = document.getElementById("videoFile");
+
       const output = document.getElementById("output");
 
+ 
+
       if (!fileInput.files[0]) {
+
         alert("Please select an MP4 file.");
+
         return;
+
       }
 
+ 
+
       const formData = new FormData();
+
       formData.append("video", fileInput.files[0]);
+
+ 
 
       output.innerHTML = "Analyzing video... This may take a few minutes.";
 
+ 
+
       try {
+
         const res = await fetch("/analyze", {
+
           method: "POST",
+
           body: formData,
+
         });
 
+ 
+
         if (!res.ok) {
+
           const error = await res.json();
+
           throw new Error(error.error || "Unexpected error");
+
         }
+
+ 
 
         const result = await res.json();
 
+ 
+
         // Render with bolded time range
+
         const html = result.map(entry => {
+
           const start = entry.start_time_minsec || "??:??";
+
           const end = entry.end_time_minsec || "??:??";
+
           const summary = entry.summary ? entry.summary.trim() : "(No summary)";
+
           return `
+
             <div class="entry">
+
               <div class="time-range">${start} to ${end}:</div>
+
               <div>${summary}</div>
+
             </div>
+
           `;
+
         }).join("");
 
+ 
+
         output.innerHTML = html;
+
       } catch (err) {
+
         output.innerHTML = "Error: " + err.message;
+
       }
+
     }
+
   </script>
+
 </body>
+
 </html>
